@@ -99,7 +99,7 @@ MainWindow::MainWindow(QWidget *parent) :
     this->show();
     ui->graphicsView->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
-    this->startTimer(10);
+    this->startTimer(dtimer);
 }
 
 MainWindow::~MainWindow()
@@ -120,9 +120,10 @@ void MainWindow::timerEvent(QTimerEvent* e)
 
                 removeItemIfBrick();
 
+                // Invert direction
                 dy = dy * -1;
                 ball->moveBy(0, dy);
-                shiftVector(15);
+                shiftVector(collisionDelta);
 
                 if (ball->y() > platform->y()) resetBall();
             }
@@ -131,36 +132,37 @@ void MainWindow::timerEvent(QTimerEvent* e)
 
             removeItemIfBrick();
 
+            // Invert direction
             dx = dx * -1;
             ball->moveBy(dx, 0);
-            shiftVector(15);
+            shiftVector(collisionDelta);
         }
 
-        shiftVector(0.2);
+        shiftVector(flyDelta);
     }
 
     // Move platform
     if (rightPressed) {
 
-        platform->moveBy(1.5, 0);
-        if (!ballRunning) ball->moveBy(1.5, 0);
+        platform->moveBy(dplatf, 0);
+        if (!ballRunning) ball->moveBy(dplatf, 0);
 
+        // Pull back
         if (platform->collidingItems().count() != 0) {
-
-            platform->moveBy(-1.5, 0);
-            if (!ballRunning) ball->moveBy(-1.5, 0);
+            platform->moveBy(-dplatf, 0);
+            if (!ballRunning) ball->moveBy(-dplatf, 0);
         }
 
 
     } else if (leftPressed) {
 
-        if (!ballRunning) ball->moveBy(-1.5, 0);
-        platform->moveBy(-1.5, 0);
+        if (!ballRunning) ball->moveBy(-dplatf, 0);
+        platform->moveBy(-dplatf, 0);
 
+        // Pull back
         if (platform->collidingItems().count() != 0) {
-
-            platform->moveBy(1.5, 0);
-            if (!ballRunning) ball->moveBy(1.5, 0);
+            platform->moveBy(dplatf, 0);
+            if (!ballRunning) ball->moveBy(dplatf, 0);
         }
     }
 }
@@ -215,9 +217,10 @@ void MainWindow::resetBall()
 
     ball->setY(platform->y() - ball->boundingRect().height());
 
+    // Initial direction
     dx = 0;
-    dy = -1.5;
-    shiftVector(45);
+    dy = -dball;
+    shiftVector(launchDelta);
 }
 
 void MainWindow::removeItemIfBrick()

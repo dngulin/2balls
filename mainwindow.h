@@ -31,10 +31,19 @@ private:
     // Graphics
     QGraphicsScene *scene;
     QGraphicsRectItem *platform;
-
-    // Ball and coordinate increments
     QGraphicsEllipseItem *ball;
+
+    // Speed constants
     qreal dx, dy;
+    static const qreal dball =  1.5;
+    static const qreal dplatf =  2.0;
+
+    static const qreal launchDelta = 30.0;
+    static const qreal collisionDelta = 15.0;
+    static const qreal flyDelta = 0.15;
+
+    static const int dtimer = 10;
+
 
     // Drawing pens && brushes
     QBrush bgBrush;
