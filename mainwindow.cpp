@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
     platform = new QGraphicsRectItem(0, 0, 30, 5);
     platform->setBrush(platformBrush);
     scene->addItem(platform);
-    platform->moveBy(35, 230);
+    platform->moveBy(85, 230);
 
     // Create Ball
     ball = new QGraphicsEllipseItem(0, 0, 6, 6);
