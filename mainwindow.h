@@ -27,7 +27,6 @@ private:
     // Controls
     bool rightPressed;
     bool leftPressed;
-    bool spacePressed;
 
     // Graphics
     QGraphicsScene *scene;
