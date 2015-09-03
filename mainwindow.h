@@ -33,6 +33,8 @@ private:
     QGraphicsRectItem *platform;
     QGraphicsEllipseItem *ball;
 
+    QGraphicsTextItem *message;
+
     // Speed constants
     qreal dx, dy;
     static const qreal dball =  1.5;
@@ -43,6 +45,10 @@ private:
     static const qreal flyDelta = 0.15;
 
     static const int dtimer = 10;
+
+    // Win && Fail counters
+    int ballscount;
+    int brickscount;
 
 
     // Drawing pens && brushes

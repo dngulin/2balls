@@ -6,6 +6,7 @@
 #include <QTime>
 #include <QKeyEvent>
 #include <QMessageBox>
+#include <QFontDatabase>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -62,6 +63,13 @@ MainWindow::MainWindow(QWidget *parent) :
     ball->setBrush(ballBrush);
     scene->addItem(ball);
 
+    resetBall();
+
+    this->show();
+    ui->graphicsView->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
+
+    this->startTimer(dtimer);
+
     // Read the level
     QFile level("LEVEL");
     if (level.exists()) {
@@ -95,12 +103,16 @@ MainWindow::MainWindow(QWidget *parent) :
         QMessageBox::critical(this, "Ошибка!",  "Файл-уровень не существует.\n");
     }
 
-    resetBall();
-
-    this->show();
-    ui->graphicsView->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
-
-    this->startTimer(dtimer);
+    // Create message
+    message = new QGraphicsTextItem();
+    QFont messageFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    messageFont.setPointSizeF(10);
+    message->setFont(messageFont);
+    message->setDefaultTextColor(Qt::yellow);
+    message->setTextWidth(180);
+    message->setPlainText("Береги свои шары, их всего два!\nРазбей ими все блоки и ощути вкус победы!\n\nПРОБЕЛ = НАЧАТЬ ИГРУ");
+    scene->addItem(message);
+    message->setPos(20, 30);
 }
 
 MainWindow::~MainWindow()
