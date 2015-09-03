@@ -5,6 +5,7 @@
 #include <QtMath>
 #include <QTime>
 #include <QKeyEvent>
+#include <QMessageBox>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -88,10 +89,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
             }
         } else {
-            qDebug() << "cano";
+            QMessageBox::critical(this, "Ошибка!",  "Не удалось открыть файл-уровень.\n");
         }
     } else {
-        qDebug() << "nof";
+        QMessageBox::critical(this, "Ошибка!",  "Файл-уровень не существует.\n");
     }
 
     resetBall();
