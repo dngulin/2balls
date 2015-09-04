@@ -11,6 +11,7 @@ MessageItem::MessageItem()
     this->setFont(messageFont);
     this->setDefaultTextColor(Qt::yellow);
     this->setTextWidth(180);
+    this->setZValue(1);
 }
 
 void MessageItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o, QWidget *w)
