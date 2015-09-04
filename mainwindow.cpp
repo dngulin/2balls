@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setFixedSize(size());
     setFocusPolicy(Qt::ClickFocus);
     grabKeyboard();
+    qsrand(QTime::currentTime().msec());
 
     // Init controls
     leftPressed = false;
@@ -209,8 +210,7 @@ void MainWindow::shiftVector(qreal delta)
     qreal phi = qAtan2(dy,dx);
 
     // Calculate real delta
-    qsrand(QTime::currentTime().msec());
-    qreal mult = (qrand() % 101) - 100;
+    qreal mult = qrand() % 201 - 100;
     delta = delta * mult / 100;
     delta = (delta / 180) * M_PI; // Go to radians
 
