@@ -25,6 +25,7 @@ private:
     // Game modes
     bool messageDisplayed;
     bool ballRunning;
+    bool gameFinished;
 
     // Controls
     bool rightPressed;
@@ -36,6 +37,9 @@ private:
     QGraphicsEllipseItem *ball;
 
     MessageItem *message;
+
+    QGraphicsTextItem *ballsIndicator;
+    QGraphicsTextItem *bricksIndicator;
 
     // Speed constants
     qreal dx, dy;
@@ -73,6 +77,11 @@ private:
     void showPauseMessage();
     void showWinMessage();
     void showLoseMessage();
+
+    void updateBallsIndicator();
+    void updateBricksIndicator();
+
+    void resetLevel();
 
 protected:
   void timerEvent(QTimerEvent* e);

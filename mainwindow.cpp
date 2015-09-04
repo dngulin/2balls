@@ -40,7 +40,6 @@ MainWindow::MainWindow(QWidget *parent) :
     keepoutPen.setColor(Qt::red);
     keepoutPen.setWidth(2);
 
-
     // Stup scene
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
@@ -64,62 +63,35 @@ MainWindow::MainWindow(QWidget *parent) :
     ball->setBrush(ballBrush);
     scene->addItem(ball);
 
-    resetBall();
+    // Setup inidicators
+    QFont indFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    indFont.setBold(true);
+    indFont.setPointSizeF(6);
 
-    // Set initial score
-    ballscount = 2;
-    brickscount = 0;
+    ballsIndicator = new QGraphicsTextItem();
+    ballsIndicator->setFont(indFont);
+    ballsIndicator->setDefaultTextColor(Qt::white);
+    scene->addItem(ballsIndicator);
+    ballsIndicator->moveBy(1, -20);
 
+    bricksIndicator = new QGraphicsTextItem();
+    bricksIndicator->setFont(indFont);
+    bricksIndicator->setDefaultTextColor(Qt::white);
+    scene->addItem(bricksIndicator);
+    bricksIndicator->moveBy(120, -20);
+
+    // Display window
     this->show();
     ui->graphicsView->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
-    this->startTimer(dtimer);
-
-    // Read the level
-    brickscount = 0;
-
-    QFile level("LEVEL");
-    if (level.exists()) {
-        if (level.open(QIODevice::ReadOnly)) {
-
-            QByteArray levelData = level.readAll();
-            QList<QByteArray> lines = levelData.split('\n');
-
-            for (int y = 0; y < lines.count(); y++) {
-
-                if (y >= 15) continue;
-                QByteArray line = lines[y];
-
-                for (int x = 0; x < line.length(); x++) {
-
-                    if (x >= 10) continue;
-                    if (line[x] == '1') {
-
-                        QGraphicsRectItem* brick = new QGraphicsRectItem(0, 0, 20, 10);
-                        brick->setBrush(brickBrush);
-                        brick->setPen(outlinePen);
-                        brick->setData(0, 1);
-                        scene->addItem(brick);
-                        brick->moveBy(x * 20, y * 10);
-
-                        brickscount++;
-
-                    }
-                }
-
-            }
-
-            level.close();
-        } else {
-            QMessageBox::critical(this, "Ошибка!",  "Не удалось открыть файл-уровень.\n");
-        }
-    } else {
-        QMessageBox::critical(this, "Ошибка!",  "Файл-уровень не существует.\n");
-    }
+    resetLevel();
 
     // Create message
     message = new MessageItem();
     showPrepareYourAnusMessage();
+
+    // Run main loop
+    this->startTimer(dtimer);
 }
 
 MainWindow::~MainWindow()
@@ -152,7 +124,8 @@ void MainWindow::timerEvent(QTimerEvent* e)
                         resetBall();
 
                         ballscount--;
-                        if (ballscount < 0) showLoseMessage();
+                        updateBallsIndicator();
+                        if (ballscount < 1) showLoseMessage();
                     }
                 }
 
@@ -208,6 +181,7 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     else if (e->key() == Qt::Key_Space) {
         if (messageDisplayed) {
 
+            if (gameFinished) resetLevel();
             scene->removeItem(message);
             messageDisplayed = false;
 
@@ -273,7 +247,8 @@ void MainWindow::removeItemIfBrick()
         delete item;
 
         brickscount--;
-        if (brickscount < 0) showWinMessage();
+        updateBricksIndicator();
+        if (brickscount < 1) showWinMessage();
     }
 }
 
@@ -305,6 +280,7 @@ void MainWindow::showWinMessage()
     showMessage("ПОБЕДА! ШИН!\n"
                 "Ура! Ты победил!\n\n\n"
                 "[ПРОБЕЛ] = ИГРАТЬ ЕЩЁ");
+    gameFinished = true;
 }
 
 void MainWindow::showLoseMessage()
@@ -312,4 +288,79 @@ void MainWindow::showLoseMessage()
     showMessage("ЭТО ПРОВАЛ!\n"
                 "Ты не уберёг свои шары!\n\n\n"
                 "[ПРОБЕЛ] = ИГРАТЬ ЕЩЁ");
+    gameFinished = true;
+}
+
+void MainWindow::updateBallsIndicator()
+{
+    ballsIndicator->setPlainText("BALLS: " + QString::number(ballscount));
+}
+
+void MainWindow::updateBricksIndicator()
+{
+    bricksIndicator->setPlainText("BRICKS: " + QString::number(brickscount));
+}
+
+void MainWindow::resetLevel()
+{
+    // Really drop old bricks
+    QList<QGraphicsItem*> items = scene->items();
+    foreach (QGraphicsItem* item, items) {
+        if (item->data(0) == 1) {
+            scene->removeItem(item);
+            delete item;
+        }
+    }
+
+    // Update indicators
+    ballscount = 2;
+    brickscount = 0;
+
+    updateBallsIndicator();
+    updateBricksIndicator();
+
+    // Build level
+    QFile level("LEVEL");
+    if (level.exists()) {
+        if (level.open(QIODevice::ReadOnly)) {
+
+            QByteArray levelData = level.readAll();
+            QList<QByteArray> lines = levelData.split('\n');
+
+            for (int y = 0; y < lines.count(); y++) {
+
+                if (y >= 15) continue;
+                QByteArray line = lines[y];
+
+                for (int x = 0; x < line.length(); x++) {
+
+                    if (x >= 10) continue;
+                    if (line[x] == '1') {
+
+                        QGraphicsRectItem* brick = new QGraphicsRectItem(0, 0, 20, 10);
+                        brick->setBrush(brickBrush);
+                        brick->setPen(outlinePen);
+                        brick->setData(0, 1);
+                        scene->addItem(brick);
+                        brick->moveBy(x * 20, y * 10);
+
+                        brickscount++;
+                        updateBricksIndicator();
+
+                    }
+                }
+
+            }
+
+            level.close();
+        } else {
+            QMessageBox::critical(this, "Ошибка!",  "Не удалось открыть файл-уровень.\n");
+        }
+    } else {
+        QMessageBox::critical(this, "Ошибка!",  "Файл-уровень не существует.\n");
+    }
+
+    resetBall();
+
+    gameFinished = false;
 }

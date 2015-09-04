@@ -7,6 +7,7 @@ MessageItem::MessageItem()
 {
     QFont messageFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     messageFont.setPointSizeF(8);
+    messageFont.setBold(true);
     this->setFont(messageFont);
     this->setDefaultTextColor(Qt::yellow);
     this->setTextWidth(180);
