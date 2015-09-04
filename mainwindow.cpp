@@ -277,8 +277,8 @@ void MainWindow::showPauseMessage()
 
 void MainWindow::showWinMessage()
 {
-    showMessage("ПОБЕДА! ШИН!\n"
-                "Ура! Ты победил!\n\n\n"
+    showMessage("ЭТО ПОБЕДА!\n"
+                "Ура! Ты разбил все блоки!\n\n\n"
                 "[ПРОБЕЛ] = ИГРАТЬ ЕЩЁ");
     gameFinished = true;
 }
