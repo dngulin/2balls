@@ -67,19 +67,19 @@ MainWindow::MainWindow(QWidget *parent) :
     // Setup inidicators
     QFont indFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
     indFont.setBold(true);
-    indFont.setPointSizeF(6);
+    indFont.setPointSizeF(5);
 
     ballsIndicator = new QGraphicsTextItem();
     ballsIndicator->setFont(indFont);
     ballsIndicator->setDefaultTextColor(Qt::white);
     scene->addItem(ballsIndicator);
-    ballsIndicator->moveBy(1, -20);
+    ballsIndicator->moveBy(1, -19);
 
     bricksIndicator = new QGraphicsTextItem();
     bricksIndicator->setFont(indFont);
     bricksIndicator->setDefaultTextColor(Qt::white);
     scene->addItem(bricksIndicator);
-    bricksIndicator->moveBy(120, -20);
+    bricksIndicator->moveBy(120, -19);
 
     // Display window
     this->show();
