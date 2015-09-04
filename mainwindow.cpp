@@ -89,7 +89,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // Create message
     message = new MessageItem();
-    showPrepareYourAnusMessage();
+    showWellcomeMessage();
 
     // Run main loop
     this->startTimer(dtimer);
@@ -207,15 +207,20 @@ void MainWindow::shiftVector(qreal delta)
 {
     // Go to polar coordiante system
     qreal r = qSqrt((dx*dx) + (dy*dy));
-    qreal phi = qAtan2(dy,dx);
+    qreal phi = qRadiansToDegrees(qAtan2(dy,dx));
 
-    // Calculate real delta
+    // Calculate delta
     qreal mult = qrand() % 201 - 100;
     delta = delta * mult / 100;
-    delta = (delta / 180) * M_PI; // Go to radians
 
-    // Rotate vector
-    phi += delta;
+    // Rotate vector and make more vertical
+    if      ((phi > 0  ) && (phi <  delta       )) phi += qAbs(delta);
+    else if ((phi > 180) && (phi < (180 + delta))) phi += qAbs(delta);
+    else if ((phi < 180) && (phi > (180 - delta))) phi -= qAbs(delta);
+    else if ((phi < 360) && (phi > (360 - delta))) phi -= qAbs(delta);
+    else                                           phi += delta;
+
+    phi = qDegreesToRadians(phi);
 
     // Return to decart coordinates
     dx = r * qCos(phi);
@@ -260,7 +265,7 @@ void MainWindow::showMessage(QString text)
     messageDisplayed = true;
 }
 
-void MainWindow::showPrepareYourAnusMessage()
+void MainWindow::showWellcomeMessage()
 {
     showMessage("Береги свои шары - их всего два!\n"
                 "Разбей ими все блоки и ощути вкус победы!\n\n"
