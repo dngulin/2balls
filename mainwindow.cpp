@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent) :
     keepoutPen.setColor(Qt::red);
     keepoutPen.setWidth(2);
 
+
     // Stup scene
     scene = new QGraphicsScene(this);
     ui->graphicsView->setScene(scene);
@@ -65,12 +66,18 @@ MainWindow::MainWindow(QWidget *parent) :
 
     resetBall();
 
+    // Set initial score
+    ballscount = 2;
+    brickscount = 0;
+
     this->show();
     ui->graphicsView->fitInView(scene->itemsBoundingRect(), Qt::KeepAspectRatio);
 
     this->startTimer(dtimer);
 
     // Read the level
+    brickscount = 0;
+
     QFile level("LEVEL");
     if (level.exists()) {
         if (level.open(QIODevice::ReadOnly)) {
@@ -91,6 +98,8 @@ MainWindow::MainWindow(QWidget *parent) :
                         brick->setData(0, 1);
                         scene->addItem(brick);
                         brick->moveBy(x * 20, y * 10);
+
+                        brickscount++;
 
                     }
                 }
@@ -133,7 +142,13 @@ void MainWindow::timerEvent(QTimerEvent* e)
                     ball->moveBy(0, dy);
                     shiftVector(collisionDelta);
 
-                    if (ball->y() > platform->y()) resetBall();
+                    if (ball->y() > platform->y()) {
+
+                        resetBall();
+
+                        ballscount--;
+                        if (ballscount < 0) showLoseMessage();
+                    }
                 }
 
             } else {
@@ -251,6 +266,9 @@ void MainWindow::removeItemIfBrick()
     if (item->data(0) == 1) {
         scene->removeItem(item);
         delete item;
+
+        brickscount--;
+        if (brickscount < 0) showWinMessage();
     }
 }
 
@@ -274,23 +292,19 @@ void MainWindow::showPrepareYourAnusMessage()
 void MainWindow::showPauseMessage()
 {
     showMessage("Игра на паузе, можно передохнуть...\n\n\n"
-                "[<-] = ДВИГАТЬ ВЛЕВО\n"
-                "[->] = ДВИГАТЬ ВПРАВО\n"
                 "[ПРОБЕЛ] = ПРОДОЛЖИТЬ");
 }
 
 void MainWindow::showWinMessage()
 {
-    showMessage("Ура! Ты победил!\n\n\n"
-                "[<-] = ДВИГАТЬ ВЛЕВО\n"
-                "[->] = ДВИГАТЬ ВПРАВО\n"
+    showMessage("ПОБЕДА! ШИН!\n"
+                "Ура! Ты победил!\n\n\n"
                 "[ПРОБЕЛ] = ИГРАТЬ ЕЩЁ");
 }
 
 void MainWindow::showLoseMessage()
 {
-    showMessage("Ты не уберёг свои шары\n\n\n"
-                "[<-] = ДВИГАТЬ ВЛЕВО\n"
-                "[->] = ДВИГАТЬ ВПРАВО\n"
+    showMessage("ЭТО ПРОВАЛ!\n"
+                "Ты не уберёг свои шары!\n\n\n"
                 "[ПРОБЕЛ] = ИГРАТЬ ЕЩЁ");
 }
