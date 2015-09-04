@@ -254,47 +254,43 @@ void MainWindow::removeItemIfBrick()
     }
 }
 
-void MainWindow::showPrepareYourAnusMessage()
+void MainWindow::showMessage(QString text)
 {
-    message->setPlainText("Береги свои шары - их всего два!\n"
-                          "Разбей ими все блоки и ощути вкус победы!\n\n"
-                          "[<-] = ДВИГАТЬ ВЛЕВО\n"
-                          "[->] = ДВИГАТЬ ВПРАВО\n"
-                          "[ПРОБЕЛ] = НАЧАТЬ ИГРУ, ЗАПУСТИТЬ ШАР, ПАУЗА");
+    message->setPlainText(text);
     scene->addItem(message);
     message->setPos(10, 100 - (message->boundingRect().height() / 2));
     messageDisplayed = true;
+}
+
+void MainWindow::showPrepareYourAnusMessage()
+{
+    showMessage("Береги свои шары - их всего два!\n"
+                "Разбей ими все блоки и ощути вкус победы!\n\n"
+                "[<-] = ДВИГАТЬ ВЛЕВО\n"
+                "[->] = ДВИГАТЬ ВПРАВО\n"
+                "[ПРОБЕЛ] = НАЧАТЬ ИГРУ, ЗАПУСТИТЬ ШАР, ПАУЗА");
 }
 
 void MainWindow::showPauseMessage()
 {
-    message->setPlainText("Игра на паузе, можно передохнуть...\n\n\n"
-                          "[<-] = ДВИГАТЬ ВЛЕВО\n"
-                          "[->] = ДВИГАТЬ ВПРАВО\n"
-                          "[ПРОБЕЛ] = ПРОДОЛЖИТЬ");
-    scene->addItem(message);
-    message->setPos(10, 100 - (message->boundingRect().height() / 2));
-    messageDisplayed = true;
+    showMessage("Игра на паузе, можно передохнуть...\n\n\n"
+                "[<-] = ДВИГАТЬ ВЛЕВО\n"
+                "[->] = ДВИГАТЬ ВПРАВО\n"
+                "[ПРОБЕЛ] = ПРОДОЛЖИТЬ");
 }
 
 void MainWindow::showWinMessage()
 {
-    message->setPlainText("Ура! Ты победил!\n\n\n"
-                          "[<-] = ДВИГАТЬ ВЛЕВО\n"
-                          "[->] = ДВИГАТЬ ВПРАВО\n"
-                          "[ПРОБЕЛ] = ИГРАТЬ ЕЩЁ");
-    scene->addItem(message);
-    message->setPos(10, 100 - (message->boundingRect().height() / 2));
-    messageDisplayed = true;
+    showMessage("Ура! Ты победил!\n\n\n"
+                "[<-] = ДВИГАТЬ ВЛЕВО\n"
+                "[->] = ДВИГАТЬ ВПРАВО\n"
+                "[ПРОБЕЛ] = ИГРАТЬ ЕЩЁ");
 }
 
 void MainWindow::showLoseMessage()
 {
-    message->setPlainText("Ты не уберёг свои шары\n\n\n"
-                          "[<-] = ДВИГАТЬ ВЛЕВО\n"
-                          "[->] = ДВИГАТЬ ВПРАВО\n"
-                          "[ПРОБЕЛ] = ИГРАТЬ ЕЩЁ");
-    scene->addItem(message);
-    message->setPos(10, 100 - (message->boundingRect().height() / 2));
-    messageDisplayed = true;
+    showMessage("Ты не уберёг свои шары\n\n\n"
+                "[<-] = ДВИГАТЬ ВЛЕВО\n"
+                "[->] = ДВИГАТЬ ВПРАВО\n"
+                "[ПРОБЕЛ] = ИГРАТЬ ЕЩЁ");
 }

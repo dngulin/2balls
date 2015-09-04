@@ -68,6 +68,7 @@ private:
     void resetBall();
     void removeItemIfBrick();
 
+    void showMessage(QString text);
     void showPrepareYourAnusMessage();
     void showPauseMessage();
     void showWinMessage();
