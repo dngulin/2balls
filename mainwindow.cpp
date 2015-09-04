@@ -87,9 +87,12 @@ MainWindow::MainWindow(QWidget *parent) :
 
             for (int y = 0; y < lines.count(); y++) {
 
+                if (y >= 15) continue;
                 QByteArray line = lines[y];
 
                 for (int x = 0; x < line.length(); x++) {
+
+                    if (x >= 10) continue;
                     if (line[x] == '1') {
 
                         QGraphicsRectItem* brick = new QGraphicsRectItem(0, 0, 20, 10);
