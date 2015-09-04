@@ -5,6 +5,8 @@
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 
+#include "messageitem.h"
+
 namespace Ui {
 class MainWindow;
 }
@@ -33,7 +35,7 @@ private:
     QGraphicsRectItem *platform;
     QGraphicsEllipseItem *ball;
 
-    QGraphicsTextItem *message;
+    MessageItem *message;
 
     // Speed constants
     qreal dx, dy;
@@ -65,6 +67,11 @@ private:
 
     void resetBall();
     void removeItemIfBrick();
+
+    void showPrepareYourAnusMessage();
+    void showPauseMessage();
+    void showWinMessage();
+    void showLoseMessage();
 
 protected:
   void timerEvent(QTimerEvent* e);

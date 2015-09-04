@@ -104,15 +104,8 @@ MainWindow::MainWindow(QWidget *parent) :
     }
 
     // Create message
-    message = new QGraphicsTextItem();
-    QFont messageFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
-    messageFont.setPointSizeF(10);
-    message->setFont(messageFont);
-    message->setDefaultTextColor(Qt::yellow);
-    message->setTextWidth(180);
-    message->setPlainText("Береги свои шары, их всего два!\nРазбей ими все блоки и ощути вкус победы!\n\nПРОБЕЛ = НАЧАТЬ ИГРУ");
-    scene->addItem(message);
-    message->setPos(20, 30);
+    message = new MessageItem();
+    showPrepareYourAnusMessage();
 }
 
 MainWindow::~MainWindow()
@@ -122,62 +115,68 @@ MainWindow::~MainWindow()
 
 void MainWindow::timerEvent(QTimerEvent* e)
 {
-    // Move ball
-    if (ballRunning) {
+    if (!messageDisplayed) {
 
-        ball->moveBy(dx, 0);
-        if (ball->collidingItems().count() == 0) {
+        // Move ball
+        if (ballRunning) {
 
-            ball->moveBy(0, dy);
-            if (ball->collidingItems().count() != 0) {
+            ball->moveBy(dx, 0);
+            if (ball->collidingItems().count() == 0) {
+
+                ball->moveBy(0, dy);
+                if (ball->collidingItems().count() != 0) {
+
+                    removeItemIfBrick();
+
+                    // Invert direction
+                    dy = dy * -1;
+                    ball->moveBy(0, dy);
+                    shiftVector(collisionDelta);
+
+                    if (ball->y() > platform->y()) resetBall();
+                }
+
+            } else {
 
                 removeItemIfBrick();
 
                 // Invert direction
-                dy = dy * -1;
-                ball->moveBy(0, dy);
+                dx = dx * -1;
+                ball->moveBy(dx, 0);
                 shiftVector(collisionDelta);
-
-                if (ball->y() > platform->y()) resetBall();
             }
 
-        } else {
-
-            removeItemIfBrick();
-
-            // Invert direction
-            dx = dx * -1;
-            ball->moveBy(dx, 0);
-            shiftVector(collisionDelta);
+            shiftVector(flyDelta);
         }
 
-        shiftVector(flyDelta);
-    }
+        // Move platform
+        if (rightPressed) {
 
-    // Move platform
-    if (rightPressed) {
-
-        platform->moveBy(dplatf, 0);
-        if (!ballRunning) ball->moveBy(dplatf, 0);
-
-        // Pull back
-        if (platform->collidingItems().count() != 0) {
-            platform->moveBy(-dplatf, 0);
-            if (!ballRunning) ball->moveBy(-dplatf, 0);
-        }
-
-
-    } else if (leftPressed) {
-
-        if (!ballRunning) ball->moveBy(-dplatf, 0);
-        platform->moveBy(-dplatf, 0);
-
-        // Pull back
-        if (platform->collidingItems().count() != 0) {
             platform->moveBy(dplatf, 0);
             if (!ballRunning) ball->moveBy(dplatf, 0);
+
+            // Pull back
+            if (platform->collidingItems().count() != 0) {
+                platform->moveBy(-dplatf, 0);
+                if (!ballRunning) ball->moveBy(-dplatf, 0);
+            }
+
+
+        } else if (leftPressed) {
+
+            if (!ballRunning) ball->moveBy(-dplatf, 0);
+            platform->moveBy(-dplatf, 0);
+
+            // Pull back
+            if (platform->collidingItems().count() != 0) {
+                platform->moveBy(dplatf, 0);
+                if (!ballRunning) ball->moveBy(dplatf, 0);
+            }
         }
+
     }
+
+    e->accept();
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *e)
@@ -187,7 +186,17 @@ void MainWindow::keyPressEvent(QKeyEvent *e)
     else if (e->key() == Qt::Key_Left)
         leftPressed = true;
     else if (e->key() == Qt::Key_Space) {
-        if (!ballRunning) ballRunning = true;
+        if (messageDisplayed) {
+
+            scene->removeItem(message);
+            messageDisplayed = false;
+
+        } else {
+            if (!ballRunning)
+                ballRunning = true;
+            else
+                showPauseMessage();
+        }
     }
 }
 
@@ -243,4 +252,49 @@ void MainWindow::removeItemIfBrick()
         scene->removeItem(item);
         delete item;
     }
+}
+
+void MainWindow::showPrepareYourAnusMessage()
+{
+    message->setPlainText("Береги свои шары - их всего два!\n"
+                          "Разбей ими все блоки и ощути вкус победы!\n\n"
+                          "[<-] = ДВИГАТЬ ВЛЕВО\n"
+                          "[->] = ДВИГАТЬ ВПРАВО\n"
+                          "[ПРОБЕЛ] = НАЧАТЬ ИГРУ, ЗАПУСТИТЬ ШАР, ПАУЗА");
+    scene->addItem(message);
+    message->setPos(10, 100 - (message->boundingRect().height() / 2));
+    messageDisplayed = true;
+}
+
+void MainWindow::showPauseMessage()
+{
+    message->setPlainText("Игра на паузе, можно передохнуть...\n\n\n"
+                          "[<-] = ДВИГАТЬ ВЛЕВО\n"
+                          "[->] = ДВИГАТЬ ВПРАВО\n"
+                          "[ПРОБЕЛ] = ПРОДОЛЖИТЬ");
+    scene->addItem(message);
+    message->setPos(10, 100 - (message->boundingRect().height() / 2));
+    messageDisplayed = true;
+}
+
+void MainWindow::showWinMessage()
+{
+    message->setPlainText("Ура! Ты победил!\n\n\n"
+                          "[<-] = ДВИГАТЬ ВЛЕВО\n"
+                          "[->] = ДВИГАТЬ ВПРАВО\n"
+                          "[ПРОБЕЛ] = ИГРАТЬ ЕЩЁ");
+    scene->addItem(message);
+    message->setPos(10, 100 - (message->boundingRect().height() / 2));
+    messageDisplayed = true;
+}
+
+void MainWindow::showLoseMessage()
+{
+    message->setPlainText("Ты не уберёг свои шары\n\n\n"
+                          "[<-] = ДВИГАТЬ ВЛЕВО\n"
+                          "[->] = ДВИГАТЬ ВПРАВО\n"
+                          "[ПРОБЕЛ] = ИГРАТЬ ЕЩЁ");
+    scene->addItem(message);
+    message->setPos(10, 100 - (message->boundingRect().height() / 2));
+    messageDisplayed = true;
 }
