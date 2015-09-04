@@ -108,6 +108,8 @@ MainWindow::MainWindow(QWidget *parent) :
                 }
 
             }
+
+            level.close();
         } else {
             QMessageBox::critical(this, "Ошибка!",  "Не удалось открыть файл-уровень.\n");
         }
