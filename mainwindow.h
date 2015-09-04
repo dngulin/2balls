@@ -73,7 +73,7 @@ private:
     void removeItemIfBrick();
 
     void showMessage(QString text);
-    void showPrepareYourAnusMessage();
+    void showWellcomeMessage();
     void showPauseMessage();
     void showWinMessage();
     void showLoseMessage();
