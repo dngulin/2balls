@@ -303,6 +303,8 @@ void MainWindow::updateBricksIndicator()
 
 void MainWindow::resetLevel()
 {
+    resetBall();
+
     // Really drop old bricks
     QList<QGraphicsItem*> items = scene->items();
     foreach (QGraphicsItem* item, items) {
@@ -360,7 +362,10 @@ void MainWindow::resetLevel()
         QMessageBox::critical(this, "Ошибка!",  "Файл-уровень не существует.\n");
     }
 
-    resetBall();
+    if (brickscount == 0) {
+        brickscount = 666;
+        updateBricksIndicator();
+    }
 
     gameFinished = false;
 }
