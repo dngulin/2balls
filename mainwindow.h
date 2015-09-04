@@ -48,7 +48,7 @@ private:
 
     static const qreal launchDelta = 30.0;
     static const qreal collisionDelta = 15.0;
-    static const qreal flyDelta = 0.1;
+    static const qreal flyDelta = 0.001;
 
     static const int dtimer = 10;
 
